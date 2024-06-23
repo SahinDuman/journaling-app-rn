@@ -55,16 +55,17 @@ const signInWithGoogle = async () => {
 };
 
 const registerWithEmailAndPassword = async ({ name, email, password }) => {
-	console.log({ name, email, password });
 	try {
 		const res = await createUserWithEmailAndPassword(auth, email, password);
 		const user = res.user;
-		await addDoc(collection(db, "users"), {
-			uid: user.uid,
-			name,
-			authProvider: "local",
-			email,
-		});
+		// TODO: Create collection in firebase and add user data
+		// const userDoc = await addDoc(collection(db, "users"), {
+		// 	uid: user.uid,
+		// 	name,
+		// 	authProvider: "local",
+		// 	email,
+		// });
+		return user;
 	} catch (err) {
 		console.error(err);
 		alert(err.message);

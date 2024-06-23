@@ -5,6 +5,8 @@ import ParallaxScrollView from "@/components/ParallaxScrollView";
 
 import { Controller, useForm } from "react-hook-form";
 import { registerWithEmailAndPassword } from "@/firebase";
+import { useState } from "react";
+import { Link, useNavigation, useRouter } from "expo-router";
 
 const defaultValues = {
 	name: "",
@@ -15,14 +17,25 @@ const defaultValues = {
 type RegsiterFormSchema = typeof defaultValues;
 
 export default function RegisterScreen() {
-	const { register, handleSubmit, formState, control } =
-		useForm<RegsiterFormSchema>({
-			defaultValues,
-		});
+	const [isLoading, setIsLoading] = useState(false);
+	const { replace } = useRouter();
 
-	const onSubmit = (data: RegsiterFormSchema) => {
-		console.log("form", data);
-		registerWithEmailAndPassword(data);
+	const { handleSubmit, formState, control } = useForm<RegsiterFormSchema>({
+		defaultValues,
+	});
+
+	const onSubmit = async (data: RegsiterFormSchema) => {
+		setIsLoading(true);
+		try {
+			const user = await registerWithEmailAndPassword(data);
+			if (user) {
+				replace("/");
+			}
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	const nameError = formState.errors.name?.message;
@@ -92,7 +105,12 @@ export default function RegisterScreen() {
 				)}
 			/>
 			{passwordError && <Text>{passwordError}</Text>}
-			<Button title="Submit" onPress={handleSubmit(onSubmit)} />
+			<Button
+				title={isLoading ? "Loading..." : "Register"}
+				disabled={isLoading}
+				onPress={handleSubmit(onSubmit)}
+			/>
+			<Link href="/login">Already have an account? Login</Link>
 		</ParallaxScrollView>
 	);
 }
