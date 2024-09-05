@@ -25,14 +25,13 @@ export default function Layout() {
 		return null;
 	}
 
-	if (!user) {
-		navigate("/login");
-	}
+	// if (!user) {
+	// 	navigate("/login");
+	// }
 
 	return (
 		<Stack>
 			<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-			<Stack.Screen name="+not-found" />
 		</Stack>
 	);
 }
